@@ -1,12 +1,15 @@
 import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Map;
 import java.awt.List;
 import java.io.File; 
 import java.util.Scanner;
 
 public class LexerProgram {
-	private Dictionary<String, Integer> tokenCollection;
+	private Map<String, Integer> tokenCollection;
 	
 	public LexerProgram(){
+		tokenCollection =  new HashMap<String, Integer>();
 		tokenCollection.put(",", 6);
 		tokenCollection.put(";", 7);
 		tokenCollection.put("prog", 10);
@@ -63,7 +66,7 @@ public class LexerProgram {
 				currentStr = sc.next();
 				lineStrings.add(currentStr);
 				if(!currentStr.equals("//")){
-					if(tokenCollection.keys().equals(currentStr)){
+					if(tokenCollection.containsKey(currentStr)){
 						System.out.println("(Tok: "+tokenCollection.get(currentStr)+" line= "+count+" str= \""+currentStr+"\"");
 					}
 					else{
