@@ -1,4 +1,5 @@
-import java.util.Dictionary; 
+import java.util.Dictionary;
+import java.awt.List;
 import java.io.File; 
 import java.util.Scanner;
 
@@ -55,24 +56,36 @@ public class LexerProgram {
 		String currentStr;
 		int count = 0;
 		int intCheck;
+		double doubleCheck;
+		List lineStrings = new List();
 		while(sc.hasNextLine()){
 			while(sc.hasNext()){
 				currentStr = sc.next();
+				lineStrings.add(currentStr);
 				if(!currentStr.equals("//")){
 					if(tokenCollection.keys().equals(currentStr)){
-						System.out.println("(Tok: "+tokenCollection.get(currentStr)+" line= "+count+"str= \""+currentStr+"\"");
+						System.out.println("(Tok: "+tokenCollection.get(currentStr)+" line= "+count+" str= \""+currentStr+"\"");
 					}
 					else{
 						try{
 							intCheck = Integer.parseInt(currentStr);
-							System.out.println("(Tok: 3 line= "+count+"str= \""+currentStr+"\" int= "+intCheck);
+							System.out.println("(Tok: 3 line= "+count+" str= \""+currentStr+"\" int= "+intCheck);
 						}
-						catch(NumberFormatException e){
-							
+						catch(NumberFormatException e){ }
+						try{
+							doubleCheck = Double.parseDouble(currentStr);
+							System.out.println("(Tok: 4 line= "+count+" str= \""+currentStr+"\" int= "+doubleCheck);
+						}
+						catch(NumberFormatException e){	}
+					}
+					if(lineStrings.getItemCount() > 1){
+						if(lineStrings.getItem(1).equals("=")){
+							System.out.println("(Tok: 2 line= "+count+" str= \""+currentStr+"\")");
 						}
 					}
 				}
 				count++;
+				lineStrings.removeAll();
 				sc.nextLine();
 			}
 		}
