@@ -53,8 +53,7 @@ public class LexerProgram {
 		tokenCollection.put(">>", 57);
 	}
 	
-	public void ReadPrintFileTokens(String fileName) throws Exception{
-		File tokenFile= new File(fileName);
+	public void ReadPrintFileTokens(File tokenFile) throws Exception{
 		Scanner sc = new Scanner(tokenFile);
 		String currentStr;
 		int count = 0;
@@ -65,17 +64,17 @@ public class LexerProgram {
 			while(sc.hasNext()){
 				currentStr = sc.next();
 				lineStrings.add(currentStr);
-				if(!currentStr.equals("//")){
-					if(tokenCollection.containsKey(currentStr)){
-						System.out.println("(Tok: "+tokenCollection.get(currentStr)+" line= "+count+" str= \""+currentStr+"\"");
+				if(!currentStr.equals("//")){								//if comment detected skip line
+					if(tokenCollection.containsKey(currentStr)){			//if token is a keyword 
+						System.out.println("(Tok: "+tokenCollection.get(currentStr)+" line= "+count+" str= \""+currentStr+"\" " + ")");
 					}
-					else{
-						try{
+					else{													//if token is not a keyword
+						try{												//check if token is an integer
 							intCheck = Integer.parseInt(currentStr);
 							System.out.println("(Tok: 3 line= "+count+" str= \""+currentStr+"\" int= "+intCheck);
 						}
 						catch(NumberFormatException e){ }
-						try{
+						try{												//check if token is a float
 							doubleCheck = Double.parseDouble(currentStr);
 							System.out.println("(Tok: 4 line= "+count+" str= \""+currentStr+"\" int= "+doubleCheck);
 						}
@@ -86,10 +85,11 @@ public class LexerProgram {
 							System.out.println("(Tok: 2 line= "+count+" str= \""+currentStr+"\")");
 						}
 					}
-				}
-				count++;
+				}else {															//comment detected; move to next line
+				count++;									
 				lineStrings.removeAll();
 				sc.nextLine();
+				}
 			}
 		}
 		sc.close();
