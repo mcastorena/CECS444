@@ -69,16 +69,20 @@ public class LexerProgram {
 						System.out.println("(Tok: "+tokenCollection.get(currentStr)+" line= "+count+" str= \""+currentStr+"\" " + ")");
 					}
 					else{													//if token is not a keyword
-						try{												//check if token is an integer
+						Boolean isInt = true;
+						try{												//check if token is an integer first
 							intCheck = Integer.parseInt(currentStr);
 							System.out.println("(Tok: 3 line= "+count+" str= \""+currentStr+"\" int= "+intCheck);
 						}
-						catch(NumberFormatException e){ }
-						try{												//check if token is a float
+						catch(NumberFormatException e){ isInt = false; }
+						if(!isInt) {										//if numeric token is not an integer check if it is a float
+							try{												//check if token is a float
+						
 							doubleCheck = Double.parseDouble(currentStr);
 							System.out.println("(Tok: 4 line= "+count+" str= \""+currentStr+"\" int= "+doubleCheck);
 						}
 						catch(NumberFormatException e){	}
+						}
 					}
 					if(lineStrings.getItemCount() > 1){
 						if(lineStrings.getItem(1).equals("=")){
