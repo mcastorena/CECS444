@@ -1,0 +1,10 @@
+﻿prog main { // Find the volume of a cube
+    print ( "Input length> " );
+    length = input ( float );
+    print ( "Input width> " );
+    width = input ( float );
+    print ( "Input height> " );
+    height = input ( float );
+    volume = length * width * height;
+    print ( "Volume= ", volume );
+}

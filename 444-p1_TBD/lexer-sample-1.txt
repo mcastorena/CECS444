@@ -1,0 +1,1 @@
+prog main { print ( "This is a test to count to three:", 1, 2, 3 ); }
