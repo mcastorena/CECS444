@@ -1,4 +1,4 @@
-prog main() {
+prog main () {
     print("Enter a number: ");
     a = input (int);
     print("Enter another number: ");
