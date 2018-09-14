@@ -21,7 +21,7 @@ public class MainApplication {
 			System.out.println("File does not exist at specified path.");		//print error message
 		}
 		
-		
+		in.close();
 		
 	}
 }
