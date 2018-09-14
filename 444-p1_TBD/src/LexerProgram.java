@@ -1,9 +1,11 @@
-import java.util.Dictionary;
+import java.util.ArrayList;
+//import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
-import java.awt.List;
+//import java.util.List;
 import java.io.File; 
 import java.util.Scanner;
+//import java.util.regex.Pattern;
 
 public class LexerProgram {
 	private Map<String, Integer> tokenCollection;
@@ -53,51 +55,109 @@ public class LexerProgram {
 		tokenCollection.put(">>", 57);
 	}
 	
-	public void ReadPrintFileTokens(File tokenFile) throws Exception{
-		Scanner sc = new Scanner(tokenFile);
+	public void ReadPrintFileTokens(File fileName) throws Exception{
+		//File tokenFile= new File(fileName);
+		Scanner scLines = new Scanner(fileName);
 		String currentStr;
-		int count = 0;
+		String collectStr = "";
+		int count = 1;
+		//boolean startQuote = false;
 		int intCheck;
 		double doubleCheck;
-		List lineStrings = new List();
-		while(sc.hasNextLine()){
+		ArrayList<String> lineStrings = new ArrayList<String>();
+		ArrayList<String> allIdentifiers = new ArrayList<String>();
+		while(scLines.hasNextLine()){
+			String lineRead = scLines.nextLine();
+			Scanner sc = new Scanner(lineRead);
 			while(sc.hasNext()){
+				collectStr = "";
 				currentStr = sc.next();
 				lineStrings.add(currentStr);
-				if(!currentStr.equals("//")){								//if comment detected skip line
-					if(tokenCollection.containsKey(currentStr)){			//if token is a keyword 
-						System.out.println("(Tok: "+tokenCollection.get(currentStr)+" line= "+count+" str= \""+currentStr+"\" " + ")");
+				if(!currentStr.equals("//")){
+					if(tokenCollection.containsKey(currentStr) && !currentStr.equals("=")){
+						System.out.println("(Tok: "+tokenCollection.get(currentStr)+" line= "+count+" str= \""+currentStr+"\")");
+						//System.out.print(currentStr);
 					}
-					else{													//if token is not a keyword
-						Boolean isInt = true;
-						try{												//check if token is an integer first
-							intCheck = Integer.parseInt(currentStr);
-							System.out.println("(Tok: 3 line= "+count+" str= \""+currentStr+"\" int= "+intCheck);
+					else{
+						if(!currentStr.contains(".")){
+							try{
+								intCheck = Integer.parseInt(currentStr);
+								System.out.println("(Tok: 3 line= "+count+" str= \""+currentStr+"\" int= "+intCheck+")");
+								//System.out.print(currentStr);
+							}
+							catch(NumberFormatException e){ }
 						}
-						catch(NumberFormatException e){ isInt = false; }
-						if(!isInt) {										//if numeric token is not an integer check if it is a float
-							try{												//check if token is a float
+						if(currentStr.contains(".")){
+							try{
+								doubleCheck = Double.parseDouble(currentStr);
+								System.out.println("(Tok: 4 line= "+count+" str= \""+currentStr+"\" float= "+doubleCheck+")");
+								//System.out.print(currentStr);
+							}
+							catch(NumberFormatException e){	}
+						}
+					}
+					if(lineStrings.size() > 1 && lineStrings.size() < 3){
+						if(lineStrings.get(1).equals("=")){
+							System.out.println("(Tok: 2 line= "+count+" str= \""+lineStrings.get(0)+"\")");
+							System.out.println("(Tok: 45 line= "+count+" str= \""+currentStr+"\")");
+							allIdentifiers.add(lineStrings.get(0));
+							//System.out.print(currentStr);
+						}
+					}
+					if(currentStr.charAt(0) == '"' && currentStr.charAt(currentStr.length()-1) == '"' && currentStr.length() > 1){
+						System.out.println("(Tok: 5 line= "+count+" str= \""+currentStr.substring(1, currentStr.length()-1)+"\")");
+						//System.out.print(currentStr);
+					}
+					if(currentStr.equals("\"") /*&& !startQuote*/){
+						//sc.useDelimiter("\" ");
+						//System.out.print(currentStr);
+						//startQuote = true;
+						currentStr = sc.next();
+						while(!currentStr.equals("\"")){
+							if(!currentStr.equals("\"")){
+								if(collectStr.equals("")){
+									collectStr = currentStr;
+								}
+								else{
+									collectStr = collectStr+" "+currentStr;
+								}
+							}
+							currentStr = sc.next();
+						}
+						System.out.println("(Tok: 5 line= "+count+" str= \" "+collectStr+" \")");
+						//System.out.print(currentStr);
+					}
+					if(currentStr.charAt(0) == '"' && currentStr.length() > 1 && currentStr.charAt(currentStr.length()-1) != '"'){
+						//collectStr = currentStr.substring(1, currentStr.length()-1);
+						while(!currentStr.equals("\"")){
+							if(!currentStr.equals("\"")){
+								if(collectStr.equals("")){
+									collectStr = currentStr.substring(1);
+								}
+								else{
+									collectStr = collectStr+" "+currentStr;
+								}
+							}
+							currentStr = sc.next();
+						}
+						System.out.println("(Tok: 5 line= "+count+" str= \""+collectStr+" \")");
+					}
+					/*if(currentStr.equals("\"") && startQuote){
+						startQuote = false;
+					}*/
+					if(allIdentifiers.contains(currentStr)){
+						System.out.println("(Tok: 2 line= "+count+" str= \""+currentStr+"\")");
+					}
+					if(currentStr.equals("\n")){
 						
-							doubleCheck = Double.parseDouble(currentStr);
-							System.out.println("(Tok: 4 line= "+count+" str= \""+currentStr+"\" int= "+doubleCheck);
-						}
-						catch(NumberFormatException e){	}
-						}
 					}
-					if(lineStrings.getItemCount() > 1){
-						if(lineStrings.getItem(1).equals("=")){
-							System.out.println("(Tok: 2 line= "+count+" str= \""+currentStr+"\")");
-						}
-					}
-				}else {															//comment detected; move to next line
-				count++;									
-				lineStrings.removeAll();
-				sc.nextLine();
 				}
 			}
+			count++;
+			lineStrings.clear();
+			sc.close();
 		}
-		sc.close();
+		System.out.println("(Tok: 0 line= "+(count-1)+" str= \"\")");
+		scLines.close();
 	}
-	
-
 }
