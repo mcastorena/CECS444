@@ -1,15 +1,18 @@
+package project1;
+
 import java.util.ArrayList;
-//import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
-//import java.util.List;
 import java.io.File; 
 import java.util.Scanner;
-//import java.util.regex.Pattern;
 
-public class LexerProgram {
+public class LexerProgram 
+{
 	private Map<String, Integer> tokenCollection;
 	
+	/**
+	 * default constructor
+	 */
 	public LexerProgram(){
 		tokenCollection =  new HashMap<String, Integer>();
 		tokenCollection.put(",", 6);
@@ -54,102 +57,94 @@ public class LexerProgram {
 		tokenCollection.put("<<", 56);
 		tokenCollection.put(">>", 57);
 	}
-	
-	public void ReadPrintFileTokens(File fileName) throws Exception{
-		//File tokenFile= new File(fileName);
+	/**
+	 * read file and display corresponding token value
+	 * @param fileName - name of file containing a program
+	 * @throws Exception
+	 */
+	public void ReadPrintFileTokens(File fileName) throws Exception
+	{
 		Scanner scLines = new Scanner(fileName);
 		String currentStr;
 		String collectStr = "";
 		int count = 1;
-		//boolean startQuote = false;
-		int intCheck;
+		//int intCheck;
 		double doubleCheck;
-		ArrayList<String> lineStrings = new ArrayList<String>();
-		ArrayList<String> allIdentifiers = new ArrayList<String>();
-		while(scLines.hasNextLine()){
+		ArrayList<String> lineStrings = new ArrayList<String>(); //list of texts
+		ArrayList<String> allIdentifiers = new ArrayList<String>(); //list of variables
+		while(scLines.hasNextLine())
+		{
 			String lineRead = scLines.nextLine();
+			
+			//read each line in the file
 			Scanner sc = new Scanner(lineRead);
-			while(sc.hasNext()){
+			while(sc.hasNext())
+			{
 				collectStr = "";
-				currentStr = sc.next();
+				currentStr = sc.next(); //read current text before the space
+				//add text to list
 				lineStrings.add(currentStr);
-				if(!currentStr.equals("//")){
-					if(tokenCollection.containsKey(currentStr) && !currentStr.equals("=")){
+				if(!currentStr.equals("//")) //current text is not a comment sign
+				{
+					//find text in the token collection
+					if(tokenCollection.containsKey(currentStr) && !currentStr.equals("="))
+					{
 						System.out.println("(Tok: "+tokenCollection.get(currentStr)+" line= "+count+" str= \""+currentStr+"\")");
-						//System.out.print(currentStr);
 					}
-					else{
-						if(!currentStr.contains(".")){
-							try{
-								intCheck = Integer.parseInt(currentStr);
-								System.out.println("(Tok: 3 line= "+count+" str= \""+currentStr+"\" int= "+intCheck+")");
-								//System.out.print(currentStr);
-							}
-							catch(NumberFormatException e){ }
+					else
+					{
+						//text might be an integer
+						if(!currentStr.contains("."))
+						{
+							getIntegerValue(currentStr,count);
 						}
-						if(currentStr.contains(".")){
-							try{
+						//text might be a decimal/double
+						if(currentStr.contains("."))
+						{
+							try
+							{
 								doubleCheck = Double.parseDouble(currentStr);
 								System.out.println("(Tok: 4 line= "+count+" str= \""+currentStr+"\" float= "+doubleCheck+")");
-								//System.out.print(currentStr);
 							}
 							catch(NumberFormatException e){	}
 						}
 					}
-					if(lineStrings.size() > 1 && lineStrings.size() < 3){
-						if(lineStrings.get(1).equals("=")){
+					//text may contain an identifier and assignment operator
+					if(lineStrings.size() > 1 && lineStrings.size() < 3)
+					{
+						//second element in list of texts is assignment
+						if(lineStrings.get(1).equals("="))
+						{
 							System.out.println("(Tok: 2 line= "+count+" str= \""+lineStrings.get(0)+"\")");
 							System.out.println("(Tok: 45 line= "+count+" str= \""+currentStr+"\")");
-							allIdentifiers.add(lineStrings.get(0));
-							//System.out.print(currentStr);
+							allIdentifiers.add(lineStrings.get(0)); //add identifier to list
 						}
 					}
-					if(currentStr.charAt(0) == '"' && currentStr.charAt(currentStr.length()-1) == '"' && currentStr.length() > 1){
+					//text is a string
+					if(currentStr.charAt(0) == '"' && currentStr.charAt(currentStr.length()-1) == '"' && currentStr.length() > 1)
+					{
 						System.out.println("(Tok: 5 line= "+count+" str= \""+currentStr.substring(1, currentStr.length()-1)+"\")");
-						//System.out.print(currentStr);
 					}
-					if(currentStr.equals("\"") /*&& !startQuote*/){
-						//sc.useDelimiter("\" ");
-						//System.out.print(currentStr);
-						//startQuote = true;
+					//text is in quotes
+					if(currentStr.equals("\""))
+					{
 						currentStr = sc.next();
-						while(!currentStr.equals("\"")){
-							if(!currentStr.equals("\"")){
-								if(collectStr.equals("")){
-									collectStr = currentStr;
-								}
-								else{
-									collectStr = collectStr+" "+currentStr;
-								}
-							}
-							currentStr = sc.next();
-						}
+						getTextInQuotes(sc,currentStr,collectStr);
 						System.out.println("(Tok: 5 line= "+count+" str= \" "+collectStr+" \")");
-						//System.out.print(currentStr);
 					}
-					if(currentStr.charAt(0) == '"' && currentStr.length() > 1 && currentStr.charAt(currentStr.length()-1) != '"'){
-						//collectStr = currentStr.substring(1, currentStr.length()-1);
-						while(!currentStr.equals("\"")){
-							if(!currentStr.equals("\"")){
-								if(collectStr.equals("")){
-									collectStr = currentStr.substring(1);
-								}
-								else{
-									collectStr = collectStr+" "+currentStr;
-								}
-							}
-							currentStr = sc.next();
-						}
-						System.out.println("(Tok: 5 line= "+count+" str= \""+collectStr+" \")");
+					//text is a string in quotes
+					if(currentStr.charAt(0) == '"' && currentStr.length() > 1 && currentStr.charAt(currentStr.length()-1) != '"')
+					{
+						getStringInQuotes(sc,currentStr,collectStr,count);
 					}
-					/*if(currentStr.equals("\"") && startQuote){
-						startQuote = false;
-					}*/
-					if(allIdentifiers.contains(currentStr)){
+					//text is an identifier in list of identifiers
+					if(allIdentifiers.contains(currentStr))
+					{
 						System.out.println("(Tok: 2 line= "+count+" str= \""+currentStr+"\")");
 					}
-					if(currentStr.equals("\n")){
-						
+					if(currentStr.equals("\n"))
+					{
+						//do nothing
 					}
 				}
 			}
@@ -159,5 +154,69 @@ public class LexerProgram {
 		}
 		System.out.println("(Tok: 0 line= "+(count-1)+" str= \"\")");
 		scLines.close();
+	}
+	
+	/**
+	 * collect text enclosed in quotes
+	 * @param sc - Scanner object iterating through quoted text
+	 * @param currentStr - current text
+	 * @param collectStr - total text enclosed in quotes
+	 */
+	public void getTextInQuotes(Scanner sc,String currentStr,String collectStr) 
+	{
+		while(!currentStr.equals("\""))
+		{
+			if(!currentStr.equals("\""))
+			{
+				if(collectStr.equals(""))
+				{
+					collectStr = currentStr;
+				}
+				else{
+					collectStr = collectStr+" "+currentStr;
+				}
+			}
+			currentStr = sc.next();
+		}
+	}
+	
+	/**
+	 * convert string to integer and display the integer value
+	 * @param currentStr - number as a string
+	 * @param count - line containing currentStr
+	 */
+	public void getIntegerValue(String currentStr,int count)
+	{
+		try
+		{
+			int intCheck = Integer.parseInt(currentStr);
+			System.out.println("(Tok: 3 line= "+count+" str= \""+currentStr+"\" int= "+intCheck+")");
+		}
+		catch(NumberFormatException e){ }
+	}
+	
+	/**
+	 * get string contained in quotes
+	 * @param sc - scanner to read through quoted text
+	 * @param currentStr - current string being read
+	 * @param collectStr - total string value from currentStr
+	 */
+	public void getStringInQuotes(Scanner sc, String currentStr, String collectStr, int count) 
+	{
+		while(!currentStr.equals("\""))
+		{
+			if(!currentStr.equals("\""))
+			{
+				if(collectStr.equals(""))
+				{
+					collectStr = currentStr.substring(1);
+				}
+				else{
+					collectStr = collectStr+" "+currentStr;
+				}
+			}
+			currentStr = sc.next();
+		}
+		System.out.println("(Tok: 5 line= "+count+" str= \""+collectStr+" \")");
 	}
 }
