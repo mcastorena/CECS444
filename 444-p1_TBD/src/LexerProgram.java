@@ -1,4 +1,3 @@
-package project1;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -69,7 +68,7 @@ public class LexerProgram
 		String collectStr = "";
 		int count = 1;
 		//int intCheck;
-		double doubleCheck;
+		//double doubleCheck;
 		ArrayList<String> lineStrings = new ArrayList<String>(); //list of texts
 		ArrayList<String> allIdentifiers = new ArrayList<String>(); //list of variables
 		while(scLines.hasNextLine())
@@ -101,12 +100,7 @@ public class LexerProgram
 						//text might be a decimal/double
 						if(currentStr.contains("."))
 						{
-							try
-							{
-								doubleCheck = Double.parseDouble(currentStr);
-								System.out.println("(Tok: 4 line= "+count+" str= \""+currentStr+"\" float= "+doubleCheck+")");
-							}
-							catch(NumberFormatException e){	}
+							getDoubleValue(currentStr, count);
 						}
 					}
 					//text may contain an identifier and assignment operator
@@ -140,11 +134,11 @@ public class LexerProgram
 					//text is an identifier in list of identifiers
 					if(allIdentifiers.contains(currentStr))
 					{
-						System.out.println("(Tok: 2 line= "+count+" str= \""+currentStr+"\")");
+						getIdentifier(currentStr, count);
 					}
 					if(currentStr.equals("\n"))
 					{
-						//do nothing
+						//if new line character do nothing
 					}
 				}
 			}
@@ -193,6 +187,30 @@ public class LexerProgram
 			System.out.println("(Tok: 3 line= "+count+" str= \""+currentStr+"\" int= "+intCheck+")");
 		}
 		catch(NumberFormatException e){ }
+	}
+	/**
+	 * convert string that contains a "." character to a double and display double value
+	 * @param currentStr - double as a string
+	 * @param count - line containing currentStr
+	 */
+	public void getDoubleValue(String currentStr, int count)
+	{
+		double doubleCheck;
+		try
+		{
+			doubleCheck = Double.parseDouble(currentStr);
+			System.out.println("(Tok: 4 line= "+count+" str= \""+currentStr+"\" float= "+doubleCheck+")");
+		}
+		catch(NumberFormatException e){	}
+	}
+	/**
+	 * 
+	 * @param currentStr - string that is an identifier in a list of identifiers
+	 * @param count - line containing currentStr
+	 */
+	public void getIdentifier(String currentStr, int count)
+	{
+		System.out.println("(Tok: 2 line= "+count+" str= \""+currentStr+"\")");
 	}
 	
 	/**
