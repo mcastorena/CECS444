@@ -7,8 +7,8 @@ import java.util.Scanner;
 public class LexerProgram {
 	
 	private Map<String, Integer> tokenCollection;	//Contains all token values from A4 Lexicon
-	private boolean isChecked, isID = true;			//Checks for any syntax errors
-	private boolean isNotComment = true;			//Checks for comments
+	private boolean isChecked, isID = true;		//Checks for any syntax and semantics errors
+	private boolean isNotComment = true;		//Checks for comments
 	
 	/**
 	 * Default Constructor for a LexerProgram object, it initializes
@@ -148,10 +148,10 @@ public class LexerProgram {
 			isChecked = true;
 		}
 		
-		if(currentStr.substring(currentStr.length()-1).equals(";")){
+		if(tokenCollection.containsKey(currentStr.substring(currentStr.length()-1))){
 			if(allIdentifiers.contains(currentStr.substring(0, currentStr.length()-1))){
 				System.out.println("(Tok: 2 line= "+lineCount+" str= \""+currentStr.substring(0, currentStr.length()-1)+"\")");
-				System.out.println("(Tok: 7 line= "+lineCount+" str= \";\")");
+				System.out.println("(Tok: "+tokenCollection.get(currentStr.substring(currentStr.length()-1))+" line= "+lineCount+" str= \""+currentStr.substring(currentStr.length()-1)+"\")");
 				isChecked = true;
 			}
 		}
@@ -192,9 +192,9 @@ public class LexerProgram {
 			System.out.println("(Tok: 5 line= "+lineCount+" str= \""+currentStr.substring(1, currentStr.length()-1)+"\")");
 			isChecked = true;
 		}
-		if(currentStr.charAt(0) == '"' && currentStr.charAt(currentStr.length()-1) == ',' && currentStr.length() > 1){
+		if(currentStr.charAt(0) == '"' && currentStr.charAt(currentStr.length()-2) == '"' && tokenCollection.containsKey(currentStr.substring(currentStr.length()-1)) && currentStr.length() > 1){
 			System.out.println("(Tok: 5 line= "+lineCount+" str= \""+currentStr.substring(1, currentStr.length()-2)+"\")");
-			System.out.println("(Tok: 6 line= "+lineCount+" str= \""+currentStr.substring(currentStr.length()-1)+"\")");
+			System.out.println("(Tok: "+tokenCollection.get(currentStr.substring(currentStr.length()-1))+" line= "+lineCount+" str= \""+currentStr.substring(currentStr.length()-1)+"\")");
 			isChecked = true;
 		}
 		if(currentStr.equals("\"") && currentStr.length() == 1){
@@ -214,9 +214,9 @@ public class LexerProgram {
 				System.out.println("(Tok: 5 line= "+lineCount+" str= \" "+collectStr+" \")");
 				isChecked = true;
 			}
-			if(currentStr.equals("\",")){
+			if(tokenCollection.containsKey(currentStr.substring(currentStr.length()-1))){
 				System.out.println("(Tok: 5 line= "+lineCount+" str= \" "+collectStr+" \")");
-				System.out.println("(Tok: 6 line= "+lineCount+" str= \",\")");
+				System.out.println("(Tok: "+tokenCollection.get(currentStr.substring(currentStr.length()-1))+" line= "+lineCount+" str= \""+currentStr.substring(currentStr.length()-1)+"\")");
 				isChecked = true;
 			}
 		}
@@ -236,16 +236,16 @@ public class LexerProgram {
 				System.out.println("(Tok: 5 line= "+lineCount+" str= \""+collectStr+" \")");
 				isChecked = true;
 			}
-			if(currentStr.equals("\",")){
+			if(tokenCollection.containsKey(currentStr.substring(currentStr.length()-1))){
 				System.out.println("(Tok: 5 line= "+lineCount+" str= \""+collectStr+" \")");
-				System.out.println("(Tok: 6 line= "+lineCount+" str= \",\")");
+				System.out.println("(Tok: "+tokenCollection.get(currentStr.substring(currentStr.length()-1))+" line= "+lineCount+" str= \""+currentStr.substring(currentStr.length()-1)+"\")");
 				isChecked = true;
 			}
 		}
-		if(currentStr.charAt(0) == '"' && currentStr.substring(currentStr.length()).equals(",")){
+		if(currentStr.charAt(0) == '"' && (currentStr.substring(currentStr.length()-1).equals(";") || currentStr.substring(currentStr.length()-1).equals(","))){
 			if(currentStr.length()>2){
 				System.out.println("(Tok: 5 line= "+lineCount+" str= \""+currentStr.substring(1, currentStr.length()-2)+"\")");
-				System.out.println("(Tok: 6 line= "+lineCount+" str= \""+currentStr.substring(currentStr.length())+"\")");
+				System.out.println("(Tok: "+tokenCollection.get(currentStr.substring(currentStr.length()-1))+" line= "+lineCount+" str= \""+currentStr.substring(currentStr.length()-1)+"\")");
 				isChecked = true;
 			}
 		}
