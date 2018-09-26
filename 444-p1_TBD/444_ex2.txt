@@ -1,27 +1,26 @@
+
 prog main () {
-    print ( "Enter a number: ") ;
-    a = input (int) ;
-    print( "Enter another number: ") ;
-    b = input (int) ;
-    c = fcn (a,b) ;
-    print ("Result: " + c) ;
+    print ( "Enter a number: " ) ;
+    a = input ( int ) ;
+    print( "Enter another number: " ) ;
+    b = input ( int ) ;
+    c = fcn ( a , b ) ;
+    print ( "Result: " + c ) ;
 }
 
-int fcn(int a, int b) {
-    print ("Enter a mathematical operation: ") ;
-    oper = input (string) ;
-    if (oper == "add") {
+int fcn( int a , int b ) {
+    print ( "Enter a mathematical operation: " ) ;
+    oper = input ( string ) ;
+    if ( oper == "add" ) {
 	return a + b;
     }
-    elseif (oper == "subtract") {
+    elseif ( oper == "subtract" ) {
 	return a - b;
     }
-    elseif (oper == "multiply") {
+    elseif ( oper == "multiply" ) {
 	return a * b;
     }
-    elseif (oper == "divide") {
+    elseif ( oper == "divide" ) {
 	return a / b;
     }
 }
-
-
