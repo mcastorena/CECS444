@@ -7,8 +7,8 @@ import java.util.Scanner;
 public class LexerProgram {
 	
 	private Map<String, Integer> tokenCollection;	//Contains all token values from A4 Lexicon
-	private boolean isChecked, isID = true;		//Checks for any syntax and semantics errors
-	private boolean isNotComment = true;		//Checks for comments
+	private boolean isChecked, isID = true;			//Checks for any syntax and semantics errors
+	private boolean isNotComment = true;			//Checks for comments
 	
 	/**
 	 * Default Constructor for a LexerProgram object, it initializes
@@ -192,7 +192,7 @@ public class LexerProgram {
 			System.out.println("(Tok: 5 line= "+lineCount+" str= \""+currentStr.substring(1, currentStr.length()-1)+"\")");
 			isChecked = true;
 		}
-		if(currentStr.charAt(0) == '"' && currentStr.charAt(currentStr.length()-2) == '"' && tokenCollection.containsKey(currentStr.substring(currentStr.length()-1)) && currentStr.length() > 1){
+		if(currentStr.charAt(0) == '"' && tokenCollection.containsKey(currentStr.substring(currentStr.length()-1)) && currentStr.length() > 1 && currentStr.charAt(currentStr.length()-2) == '"' ){
 			System.out.println("(Tok: 5 line= "+lineCount+" str= \""+currentStr.substring(1, currentStr.length()-2)+"\")");
 			System.out.println("(Tok: "+tokenCollection.get(currentStr.substring(currentStr.length()-1))+" line= "+lineCount+" str= \""+currentStr.substring(currentStr.length()-1)+"\")");
 			isChecked = true;
@@ -238,13 +238,6 @@ public class LexerProgram {
 			}
 			if(tokenCollection.containsKey(currentStr.substring(currentStr.length()-1))){
 				System.out.println("(Tok: 5 line= "+lineCount+" str= \""+collectStr+" \")");
-				System.out.println("(Tok: "+tokenCollection.get(currentStr.substring(currentStr.length()-1))+" line= "+lineCount+" str= \""+currentStr.substring(currentStr.length()-1)+"\")");
-				isChecked = true;
-			}
-		}
-		if(currentStr.charAt(0) == '"' && (currentStr.substring(currentStr.length()-1).equals(";") || currentStr.substring(currentStr.length()-1).equals(","))){
-			if(currentStr.length()>2){
-				System.out.println("(Tok: 5 line= "+lineCount+" str= \""+currentStr.substring(1, currentStr.length()-2)+"\")");
 				System.out.println("(Tok: "+tokenCollection.get(currentStr.substring(currentStr.length()-1))+" line= "+lineCount+" str= \""+currentStr.substring(currentStr.length()-1)+"\")");
 				isChecked = true;
 			}
