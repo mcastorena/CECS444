@@ -7,8 +7,8 @@ import java.util.Scanner;
 public class LexerProgram {
 	
 	private Map<String, Integer> tokenCollection;	//Contains all token values from A4 Lexicon
-	private boolean isChecked, isID = true;			//Checks for any syntax and semantics errors
-	private boolean isNotComment = true;			//Checks for comments
+	private boolean isChecked, isID = true;		//Checks for any syntax and semantics errors
+	private boolean isNotComment = true;		//Checks for comments
 	
 	/**
 	 * Default Constructor for a LexerProgram object, it initializes
@@ -221,23 +221,32 @@ public class LexerProgram {
 			}
 		}
 		if(currentStr.charAt(0) == '"' && currentStr.length() > 1 && currentStr.charAt(currentStr.length()-1) != '"' && currentStr.charAt(currentStr.length()-2) != '"'){
-			while(!currentStr.equals("\"") && !currentStr.equals("\",")){
-				if(!currentStr.equals("\"") && !currentStr.equals("\",")){
-					if(collectStr.equals("")){
-						collectStr = currentStr.substring(1);
+			while(!currentStr.substring(currentStr.length()-1).equals("\"") && !currentStr.substring(currentStr.length()-1).equals(",")){
+				if(collectStr.equals("")){
+					collectStr = currentStr.substring(1);
+				}
+				else{
+					if(currentStr.charAt(currentStr.length()-1) != '"'){
+						collectStr = collectStr+" "+currentStr;
 					}
-					else{
+					else if(currentStr.length() > 1 && currentStr.charAt(currentStr.length()-2) != '"'){
 						collectStr = collectStr+" "+currentStr;
 					}
 				}
 				currentStr = sc.next();
 			}
-			if(currentStr.equals("\"")){
-				System.out.println("(Tok: 5 line= "+lineCount+" str= \""+collectStr+" \")");
+			if(currentStr.charAt(currentStr.length()-1) == '"'){
+				collectStr = collectStr+" "+currentStr.substring(0, currentStr.length()-1);
+			}
+			else if(currentStr.length() > 1 && currentStr.charAt(currentStr.length()-2) == '"'){
+				collectStr = collectStr+" "+currentStr.substring(0, currentStr.length()-2);
+			}
+			if(currentStr.substring(currentStr.length()-1).equals("\"")){
+				System.out.println("(Tok: 5 line= "+lineCount+" str= \""+collectStr+"\")");
 				isChecked = true;
 			}
 			if(tokenCollection.containsKey(currentStr.substring(currentStr.length()-1))){
-				System.out.println("(Tok: 5 line= "+lineCount+" str= \""+collectStr+" \")");
+				System.out.println("(Tok: 5 line= "+lineCount+" str= \""+collectStr+"\")");
 				System.out.println("(Tok: "+tokenCollection.get(currentStr.substring(currentStr.length()-1))+" line= "+lineCount+" str= \""+currentStr.substring(currentStr.length()-1)+"\")");
 				isChecked = true;
 			}
