@@ -150,7 +150,7 @@ public class LexerProgram
 		scLines.close();
 	}
 	
-	/**
+	/** Minhkhoa Vu
 	 * collect text enclosed in quotes
 	 * @param sc - Scanner object iterating through quoted text
 	 * @param currentStr - current text
@@ -174,7 +174,7 @@ public class LexerProgram
 		}
 	}
 	
-	/**
+	/** Minhkhoa Vu
 	 * convert string to integer and display the integer value
 	 * @param currentStr - number as a string
 	 * @param count - line containing currentStr
@@ -188,7 +188,7 @@ public class LexerProgram
 		}
 		catch(NumberFormatException e){ }
 	}
-	/**
+	/** 
 	 * convert string that contains a "." character to a double and display double value
 	 * @param currentStr - double as a string
 	 * @param count - line containing currentStr
@@ -213,7 +213,7 @@ public class LexerProgram
 		System.out.println("(Tok: 2 line= "+count+" str= \""+currentStr+"\")");
 	}
 	
-	/**
+	/** Minhkhoa Vu
 	 * get string contained in quotes
 	 * @param sc - scanner to read through quoted text
 	 * @param currentStr - current string being read
