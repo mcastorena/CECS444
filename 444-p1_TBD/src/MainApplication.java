@@ -1,3 +1,15 @@
+/**
+Authors:
+Minhkhoa Vu	minhkhoavu954@gmail.com
+Anthony Myers	anthonysmyers@yahoo.com
+Juan Espinoza	jaespin30@yahoo.com
+Miguel Casterona miguel.angel.castorena@gmail.com
+
+MainApplication.java Description
+This is the main file of our lexer program. It prompts the user for the filepath of the text file to be tokenized,
+creates a file object from the text file, and passes the file object to the lexer to be tokenized after some file checks.
+*/
+
 
 import java.io.File;
 import java.util.Scanner;
