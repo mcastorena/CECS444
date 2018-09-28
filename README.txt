@@ -80,6 +80,75 @@ prog main { // Find the volume of a cube
     print ( "Volume= " , volume );
 }
 
+Enter the path of the file: /Users/mcastro/git/CECS444/444-p1_TBD/a4-sample-1.txt
+(Tok: 10 line= 1 str= "prog")
+(Tok: 11 line= 1 str= "main")
+(Tok: 33 line= 1 str= "{")
+(Tok: 23 line= 1 str= "print")
+(Tok: 37 line= 1 str= "(")
+(Tok: 5 line= 1 str= "ASCII:")
+(Tok: 6 line= 1 str= ",")
+(Tok: 5 line= 1 str= " A= ")
+(Tok: 6 line= 1 str= ",")
+(Tok: 3 line= 1 str= "65" int= 65)
+(Tok: 6 line= 1 str= ",")
+(Tok: 5 line= 1 str= " Z= ")
+(Tok: 6 line= 1 str= ",")
+(Tok: 3 line= 1 str= "90" int= 90)
+(Tok: 38 line= 1 str= ")")
+(Tok: 7 line= 1 str= ";")
+(Tok: 34 line= 1 str= "}")
+(Tok: 0 line= 1 str= "")
+
+a4-sample-1.txt contents:
+prog main { print( "ASCII:", " A= ", 65, " Z= ", 90 ); }
+
+Enter the path of the file: /Users/mcastro/git/CECS444/444-p1_TBD/A4-sample-2.txt
+(Tok: 10 line= 1 str= "prog")
+(Tok: 11 line= 1 str= "main")
+(Tok: 33 line= 1 str= "{")
+(Tok: 2 line= 2 str= "pi")
+(Tok: 45 line= 2 str= "=")
+(Tok: 4 line= 2 str= "3.14" float= 3.14)
+(Tok: 7 line= 2 str= ";")
+(Tok: 23 line= 3 str= "print")
+(Tok: 37 line= 3 str= "(")
+(Tok: 5 line= 3 str= "Input radius> ")
+(Tok: 38 line= 3 str= ")")
+(Tok: 7 line= 3 str= ";")
+(Tok: 2 line= 4 str= "rx")
+(Tok: 45 line= 4 str= "=")
+(Tok: 22 line= 4 str= "input")
+(Tok: 37 line= 4 str= "(")
+(Tok: 15 line= 4 str= "float")
+(Tok: 38 line= 4 str= ")")
+(Tok: 7 line= 4 str= ";")
+(Tok: 2 line= 5 str= "circum")
+(Tok: 45 line= 5 str= "=")
+(Tok: 3 line= 5 str= "2" int= 2)
+(Tok: 41 line= 5 str= "*")
+(Tok: 2 line= 5 str= "pi")
+(Tok: 41 line= 5 str= "*")
+(Tok: 2 line= 5 str= "rx")
+(Tok: 7 line= 5 str= ";")
+(Tok: 23 line= 6 str= "print")
+(Tok: 37 line= 6 str= "(")
+(Tok: 5 line= 6 str= "Circumf= ")
+(Tok: 6 line= 6 str= ",")
+(Tok: 2 line= 6 str= "circum")
+(Tok: 38 line= 6 str= ")")
+(Tok: 7 line= 6 str= ";")
+(Tok: 34 line= 7 str= "}")
+(Tok: 0 line= 7 str= "")
+
+A4-sample-2.txt contents:
+prog main { // Find the circumference of a circle.
+pi = 3.14;
+print( "Input radius> " );
+rx = input ( float );
+circum = 2 * pi * rx;
+print( "Circumf= ", circum );
+}
 
 Features
 This program takes A4 language code in .txt files and outputs a list of tokens for that program.
