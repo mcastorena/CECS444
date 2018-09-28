@@ -1,3 +1,16 @@
+/**
+Authors:
+Minhkhoa Vu	minhkhoavu954@gmail.com
+Anthony Myers	anthonysmyers@yahoo.com
+Juan Espinoza	jaespin30@yahoo.com
+Miguel Casterona miguel.angel.castorena@gmail.com
+
+LexerProgram.java Description
+This file defines the lexer object. The lexer object contains a Map object that contains all A4 tokens and their corresponding token IDs.
+The lexer takes a file object, tokenizes the input, and outputs the tokens in the format: (Tok: X line= Y str= "Z")
+Where X = token ID number, Y = line number of the token, and Z is the token in string format.
+*/
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
