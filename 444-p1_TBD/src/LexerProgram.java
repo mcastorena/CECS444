@@ -1,3 +1,15 @@
+package project1;
+/**
+Authors:
+Minhkhoa Vu	minhkhoavu954@gmail.com
+Anthony Myers	anthonysmyers@yahoo.com
+Juan Espinoza	jaespin30@yahoo.com
+Miguel Casterona miguel.angel.castorena@gmail.com
+LexerProgram.java Description
+This file defines the lexer object. The lexer object contains a Map object that contains all A4 tokens and their corresponding token IDs.
+The lexer takes a file object, tokenizes the input, and outputs the tokens in the format: (Tok: X line= Y str= "Z")
+Where X = token ID number, Y = line number of the token, and Z is the token in string format.
+*/
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -5,12 +17,16 @@ import java.util.Map;
 import java.io.File; 
 import java.util.Scanner;
 
-public class LexerProgram 
-{
-	private Map<String, Integer> tokenCollection;
+public class LexerProgram {
+	
+	private Map<String, Integer> tokenCollection;	//Contains all token values from A4 Lexicon
+	private boolean isChecked, isID = true;		//Checks for any syntax and semantics errors
+	private boolean isNotComment = true;		//Checks for comments
 	
 	/**
-	 * default constructor
+	 * Default Constructor for a LexerProgram object, it initializes
+	 * values in the LexerProgram class property tokenCollection that
+	 * holds all token values from the A4 Lexicon
 	 */
 	public LexerProgram(){
 		tokenCollection =  new HashMap<String, Integer>();
@@ -56,185 +72,295 @@ public class LexerProgram
 		tokenCollection.put("<<", 56);
 		tokenCollection.put(">>", 57);
 	}
+	
 	/**
-	 * read file and display corresponding token value
-	 * @param fileName - name of file containing a program
-	 * @throws Exception
+	 * ReadPrintFileTokens reads a file of source code and prints out all tokens
+	 * that exist in the source code based on the A4 Lexicon
+	 * 
+	 * @param fileName File object that will be read and parsed by a scanner
+	 * @throws Exception if files is not found or types are not parsed correctly
 	 */
-	public void ReadPrintFileTokens(File fileName) throws Exception
-	{
-		Scanner scLines = new Scanner(fileName);
-		String currentStr;
-		String collectStr = "";
-		int count = 1;
-		//int intCheck;
-		//double doubleCheck;
-		ArrayList<String> lineStrings = new ArrayList<String>(); //list of texts
-		ArrayList<String> allIdentifiers = new ArrayList<String>(); //list of variables
-		while(scLines.hasNextLine())
-		{
-			String lineRead = scLines.nextLine();
-			
-			//read each line in the file
+	public void ReadPrintFileTokens(File fileName) throws Exception{
+		Scanner scLines = new Scanner(fileName);						//Scanner to read string values line by line
+		String currentStr;												//String used to reference the most recently scanned string from source code text
+		String collectStr = "";											//String used for values stored between double quotes
+		int lineCount = 1;												//Integer that keeps track of the current line scanned in source code text
+		ArrayList<String> lineStrings = new ArrayList<String>();		//ArrayList of all string values within a line from source code text 
+		ArrayList<String> allIdentifiers = new ArrayList<String>();		//ArrayList of any identifiers referenced in source code text
+		while(scLines.hasNextLine() && (isChecked || isID)){
+			String lineRead = scLines.nextLine();	//scan a line
 			Scanner sc = new Scanner(lineRead);
-			while(sc.hasNext())
+			isNotComment = true;
+			
+			//scan through each token in line
+			while(sc.hasNext() && (isChecked || isID))
 			{
 				collectStr = "";
-				currentStr = sc.next(); //read current text before the space
-				//add text to list
+				currentStr = sc.next();
 				lineStrings.add(currentStr);
-				if(!currentStr.equals("//")) //current text is not a comment sign
+				if(!isNotComment)
 				{
-					//find text in the token collection
-					if(tokenCollection.containsKey(currentStr) && !currentStr.equals("="))
-					{
-						System.out.println("(Tok: "+tokenCollection.get(currentStr)+" line= "+count+" str= \""+currentStr+"\")");
+					isID = true;
+				}
+				if(!currentStr.equals("//") && isNotComment)
+				{
+					isChecked = false;
+					if(lineStrings.size()>2){
+						isID = false;
 					}
-					else
-					{
-						//text might be an integer
-						if(!currentStr.contains("."))
-						{
-							getIntegerValue(currentStr,count);
-						}
-						//text might be a decimal/double
-						if(currentStr.contains("."))
-						{
-							getDoubleValue(currentStr, count);
-						}
+					else{
+						isID = true;
 					}
-					//text may contain an identifier and assignment operator
-					if(lineStrings.size() > 1 && lineStrings.size() < 3)
+					TokenCollectionCheck(currentStr, lineCount); //check if token is in collection
+					NumberTokenizer(currentStr, lineCount); //check if token contains a number
+					AddIdentifierToken(currentStr, lineCount, lineStrings, allIdentifiers);  //add identifier as token to collection of identifiers
+					QuoteTokenizer(currentStr, lineCount, collectStr, sc); //check if token is in quotes
+					UseIdentifierToken(currentStr, lineCount, allIdentifiers); //check if token is identifier already referenced
+					if(!isChecked && !isID)
 					{
-						//second element in list of texts is assignment
-						if(lineStrings.get(1).equals("="))
-						{
-							System.out.println("(Tok: 2 line= "+count+" str= \""+lineStrings.get(0)+"\")");
-							System.out.println("(Tok: 45 line= "+count+" str= \""+currentStr+"\")");
-							allIdentifiers.add(lineStrings.get(0)); //add identifier to list
-						}
-					}
-					//text is a string
-					if(currentStr.charAt(0) == '"' && currentStr.charAt(currentStr.length()-1) == '"' && currentStr.length() > 1)
-					{
-						System.out.println("(Tok: 5 line= "+count+" str= \""+currentStr.substring(1, currentStr.length()-1)+"\")");
-					}
-					//text is in quotes
-					if(currentStr.equals("\""))
-					{
-						currentStr = sc.next();
-						getTextInQuotes(sc,currentStr,collectStr);
-						System.out.println("(Tok: 5 line= "+count+" str= \" "+collectStr+" \")");
-					}
-					//text is a string in quotes
-					if(currentStr.charAt(0) == '"' && currentStr.length() > 1 && currentStr.charAt(currentStr.length()-1) != '"')
-					{
-						getStringInQuotes(sc,currentStr,collectStr,count);
-					}
-					//text is an identifier in list of identifiers
-					if(allIdentifiers.contains(currentStr))
-					{
-						getIdentifier(currentStr, count);
-					}
-					if(currentStr.equals("\n"))
-					{
-						//if new line character do nothing
+						System.out.println("(Tok: 99 line= "+(lineCount-1)+" str= \"error\")");
 					}
 				}
+				else{
+					isNotComment = false;
+				}
 			}
-			count++;
+			lineCount++;
 			lineStrings.clear();
 			sc.close();
 		}
-		System.out.println("(Tok: 0 line= "+(count-1)+" str= \"\")");
+		System.out.println("(Tok: 0 line= "+(lineCount-1)+" str= \"\")");
 		scLines.close();
 	}
 	
-	/** Minhkhoa Vu
-	 * collect text enclosed in quotes
-	 * @param sc - Scanner object iterating through quoted text
-	 * @param currentStr - current text
-	 * @param collectStr - total text enclosed in quotes
-	 */
-	public void getTextInQuotes(Scanner sc,String currentStr,String collectStr) 
-	{
-		while(!currentStr.equals("\""))
-		{
-			if(!currentStr.equals("\""))
-			{
-				if(collectStr.equals(""))
-				{
-					collectStr = currentStr;
-				}
-				else{
-					collectStr = collectStr+" "+currentStr;
-				}
-			}
-			currentStr = sc.next();
-		}
-	}
-	
-	/** Minhkhoa Vu
-	 * convert string to integer and display the integer value
-	 * @param currentStr - number as a string
-	 * @param count - line containing currentStr
-	 */
-	public void getIntegerValue(String currentStr,int count)
-	{
-		try
-		{
-			int intCheck = Integer.parseInt(currentStr);
-			System.out.println("(Tok: 3 line= "+count+" str= \""+currentStr+"\" int= "+intCheck+")");
-		}
-		catch(NumberFormatException e){ }
-	}
-	/** 
-	 * convert string that contains a "." character to a double and display double value
-	 * @param currentStr - double as a string
-	 * @param count - line containing currentStr
-	 */
-	public void getDoubleValue(String currentStr, int count)
-	{
-		double doubleCheck;
-		try
-		{
-			doubleCheck = Double.parseDouble(currentStr);
-			System.out.println("(Tok: 4 line= "+count+" str= \""+currentStr+"\" float= "+doubleCheck+")");
-		}
-		catch(NumberFormatException e){	}
-	}
 	/**
+	 * AddIdentifierToken parses and adds a new identifier to the collection of all identifiers referenced
+	 * in the source code and then prints the resulting tokens
 	 * 
-	 * @param currentStr - string that is an identifier in a list of identifiers
-	 * @param count - line containing currentStr
+	 * @param currentStr String value of the most recently parsed String from the source code
+	 * @param lineCount Integer value that keeps track of the current line of the source code
+	 * @param lineStrings ArrayList of String objects of all string values in a single line from the source code
+	 * @param allIdentifiers ArrayList of String objects of all identifiers that have been instantiated and referenced in the source code
 	 */
-	public void getIdentifier(String currentStr, int count)
-	{
-		System.out.println("(Tok: 2 line= "+count+" str= \""+currentStr+"\")");
+	public void AddIdentifierToken(String currentStr, int lineCount, ArrayList<String> lineStrings, ArrayList<String> allIdentifiers){
+		if(lineStrings.size() == 2){
+			if(lineStrings.get(1).equals("="))
+			{
+				System.out.println("(Tok: 2 line= "+lineCount+" str= \""+lineStrings.get(0)+"\")");
+				System.out.println("(Tok: 45 line= "+lineCount+" str= \""+currentStr+"\")");
+				isChecked = true;
+				allIdentifiers.add(lineStrings.get(0));
+			}
+		}
 	}
 	
-	/** Minhkhoa Vu
-	 * get string contained in quotes
-	 * @param sc - scanner to read through quoted text
-	 * @param currentStr - current string being read
-	 * @param collectStr - total string value from currentStr
+	/**
+	 * UseIdentifierToken checks if the current String value is one of the identifier that was previously
+	 * referenced in the source code text file and then prints out the resulting tokens
+	 * 
+	 * @param currentStr String value of the most recently parsed String from the source code
+	 * @param lineCount Integer value that keeps track of the current line of the source code
+	 * @param allIdentifiers ArrayList of String objects of all identifiers that have been instantiated and referenced in the source code
 	 */
-	public void getStringInQuotes(Scanner sc, String currentStr, String collectStr, int count) 
-	{
-		while(!currentStr.equals("\""))
+	public void UseIdentifierToken(String currentStr, int lineCount, ArrayList<String> allIdentifiers){
+		if(allIdentifiers.contains(currentStr))
 		{
-			if(!currentStr.equals("\""))
+			System.out.println("(Tok: 2 line= "+lineCount+" str= \""+currentStr+"\")");
+			isChecked = true;
+		}
+		
+		if(tokenCollection.containsKey(currentStr.substring(currentStr.length()-1)))
+		{
+			if(allIdentifiers.contains(currentStr.substring(0, currentStr.length()-1)))
+			{
+				System.out.println("(Tok: 2 line= "+lineCount+" str= \""+currentStr.substring(0, currentStr.length()-1)+"\")");
+				System.out.println("(Tok: "+tokenCollection.get(currentStr.substring(currentStr.length()-1))+" line= "+lineCount+" str= \""+currentStr.substring(currentStr.length()-1)+"\")");
+				isChecked = true;
+			}
+		}
+	}
+	
+	/**
+	 * TokenCollectionCheck uses a mapping of token key and values based on the A4 Lexicon to see
+	 * if the currently scanned String is a value from the A4 Lexicon
+	 * 
+	 * @param currentStr String value of the most recently parsed String from the source code
+	 * @param lineCount Integer value that keeps track of the current line of the source code
+	 */
+	public void TokenCollectionCheck(String currentStr, int lineCount){
+		if((tokenCollection.containsKey(currentStr) && !currentStr.equals("="))||(tokenCollection.containsKey(currentStr.substring(0, currentStr.length()-1)))){
+			if(tokenCollection.containsKey(currentStr)){
+				System.out.println("(Tok: "+tokenCollection.get(currentStr)+" line= "+lineCount+" str= \""+currentStr+"\")");
+				isChecked = true;
+			}
+			else{
+				System.out.println("(Tok: "+tokenCollection.get(currentStr.substring(0, currentStr.length()-1))+" line= "+lineCount+" str= \""+currentStr.substring(0, currentStr.length()-1)+"\")");
+				System.out.println("(Tok: "+tokenCollection.get(currentStr.substring(currentStr.length()-1))+" line= "+lineCount+" str= \""+currentStr.substring(currentStr.length()-1)+"\")");
+				isChecked = true;
+			}
+		}
+	}
+	
+	/**
+	 * QuoteTokenizer parses any Strings that were in double quotes from the original source code text
+	 * and prints out the resulting tokens
+	 * 
+	 * @param currentStr String value of the most recently parsed String from the source code
+	 * @param lineCount Integer value that keeps track of the current line of the source code
+	 * @param collectStr
+	 * @param sc
+	 */
+	public void QuoteTokenizer(String currentStr, int lineCount, String collectStr, Scanner sc)
+	{
+		if(currentStr.charAt(0) == '"' && currentStr.charAt(currentStr.length()-1) == '"' && currentStr.length() > 1){
+			System.out.println("(Tok: 5 line= "+lineCount+" str= \""+currentStr.substring(1, currentStr.length()-1)+"\")");
+			isChecked = true;
+		}
+		if(check(currentStr))
+		{
+			System.out.println("(Tok: 5 line= "+lineCount+" str= \""+currentStr.substring(1, currentStr.length()-2)+"\")");
+			System.out.println("(Tok: "+tokenCollection.get(currentStr.substring(currentStr.length()-1))+" line= "+lineCount+" str= \""+currentStr.substring(currentStr.length()-1)+"\")");
+			isChecked = true;
+		}
+		if(currentStr.equals("\"") && currentStr.length() == 1)
+		{
+			currentStr = sc.next();
+			while(!currentStr.equals("\"") && !currentStr.equals("\","))
+			{
+				if(!currentStr.equals("\"") && !currentStr.equals("\","))
+				{
+					if(collectStr.equals(""))
+					{
+						collectStr = currentStr;
+					}
+					else{
+						collectStr = collectStr+" "+currentStr;
+					}
+				}
+				currentStr = sc.next();
+			}
+			if(currentStr.equals("\""))
+			{
+				System.out.println("(Tok: 5 line= "+lineCount+" str= \" "+collectStr+" \")");
+				isChecked = true;
+			}
+			if(tokenCollection.containsKey(currentStr.substring(currentStr.length()-1)))
+			{
+				System.out.println("(Tok: 5 line= "+lineCount+" str= \" "+collectStr+" \")");
+				System.out.println("(Tok: "+tokenCollection.get(currentStr.substring(currentStr.length()-1))+" line= "+lineCount+" str= \""+currentStr.substring(currentStr.length()-1)+"\")");
+				isChecked = true;
+			}
+		}
+		if(currentStr.charAt(0) == '"' && currentStr.length() > 1 && currentStr.charAt(currentStr.length()-1) != '"' && currentStr.charAt(currentStr.length()-2) != '"')
+		{
+			while(!currentStr.substring(currentStr.length()-1).equals("\"") && !currentStr.substring(currentStr.length()-1).equals(","))
 			{
 				if(collectStr.equals(""))
 				{
 					collectStr = currentStr.substring(1);
 				}
-				else{
-					collectStr = collectStr+" "+currentStr;
+				else
+				{
+					if(currentStr.charAt(currentStr.length()-1) != '"')
+					{
+						collectStr = collectStr+" "+currentStr;
+					}
+					else if(currentStr.length() > 1 && currentStr.charAt(currentStr.length()-2) != '"'){
+						collectStr = collectStr+" "+currentStr;
+					}
 				}
+				currentStr = sc.next();
 			}
-			currentStr = sc.next();
+			if(currentStr.charAt(currentStr.length()-1) == '"')
+			{
+				collectStr = collectStr+" "+currentStr.substring(0, currentStr.length()-1);
+			}
+			else if(currentStr.length() > 1 && currentStr.charAt(currentStr.length()-2) == '"')
+			{
+				collectStr = collectStr+" "+currentStr.substring(0, currentStr.length()-2);
+			}
+			if(currentStr.substring(currentStr.length()-1).equals("\"")){
+				System.out.println("(Tok: 5 line= "+lineCount+" str= \""+collectStr+"\")");
+				isChecked = true;
+			}
+			if(tokenCollection.containsKey(currentStr.substring(currentStr.length()-1)))
+			{
+				System.out.println("(Tok: 5 line= "+lineCount+" str= \""+collectStr+"\")");
+				System.out.println("(Tok: "+tokenCollection.get(currentStr.substring(currentStr.length()-1))+" line= "+lineCount+" str= \""+currentStr.substring(currentStr.length()-1)+"\")");
+				isChecked = true;
+			}
 		}
-		System.out.println("(Tok: 5 line= "+count+" str= \""+collectStr+" \")");
+	}
+	
+	/**
+	 * NumberTokenizer checks to see if the currently scanned String can be parsed as either an 
+	 * Integer value or a Float value and then prints out the resulting token
+	 * 
+	 * @param currentStr String value of the most recently parsed String from the source code
+	 * @param lineCount Integer value that keeps track of the current line of the source code
+	 */
+	public void NumberTokenizer(String currentStr, int lineCount)
+	{
+		if(!currentStr.contains("."))
+		{
+			try
+			{
+				int intCheck = Integer.parseInt(currentStr);
+				System.out.println("(Tok: 3 line= "+lineCount+" str= \""+currentStr+"\" int= "+intCheck+")");
+				isChecked = true;
+			}
+			catch(NumberFormatException e){ }
+		}
+		if(currentStr.contains(".")){
+			try
+			{
+				double doubleCheck = Double.parseDouble(currentStr);
+				System.out.println("(Tok: 4 line= "+lineCount+" str= \""+currentStr+"\" float= "+doubleCheck+")");
+				isChecked = true;
+			}
+			catch(NumberFormatException e){	}
+		}
+		if(currentStr.contains(",") || currentStr.contains(";"))
+		{
+			getNumberValue(currentStr,lineCount);
+		}	
+	}
+	
+	/** convert string to a number and display the number 
+	 * @param currentStr - string variable holding a number as a value
+	 * @param lineCount - line containing the string
+	 */
+	public void getNumberValue(String currentStr,int lineCount) 
+	{
+		if(!currentStr.contains("."))
+		{
+			try
+			{
+				int intCheck = Integer.parseInt(currentStr.substring(0, currentStr.length()-1));
+				System.out.println("(Tok: 3 line= "+lineCount+" str= \""+currentStr.substring(0, currentStr.length()-1)+"\" int= "+intCheck+")");
+				System.out.println("(Tok: "+tokenCollection.get(currentStr.substring(currentStr.length()-1))+" line= "+lineCount+" str= \""+currentStr.substring(currentStr.length()-1)+"\")");
+				isChecked = true;
+			}
+			catch(NumberFormatException e){ }
+		}
+		if(currentStr.contains("."))
+		{
+			try{
+				double doubleCheck = Double.parseDouble(currentStr.substring(0, currentStr.length()-1));
+				System.out.println("(Tok: 4 line= "+lineCount+" str= \""+currentStr.substring(0, currentStr.length()-1)+"\" float= "+doubleCheck+")");
+				System.out.println("(Tok: "+tokenCollection.get(currentStr.substring(currentStr.length()-1))+" line= "+lineCount+" str= \""+currentStr.substring(currentStr.length()-1)+"\")");
+				isChecked = true;
+			}
+			catch(NumberFormatException e){	}
+		}
+	}
+	/**
+	 * check if values are within double quotes and contains whitespace
+	 * @param currentStr
+	 * @return true or false
+	 */
+	public boolean check(String currentStr) 
+	{
+		return (currentStr.charAt(0) == '"' && tokenCollection.containsKey(currentStr.substring(currentStr.length()-1)) && currentStr.length() > 1 && currentStr.charAt(currentStr.length()-2) == '"');
 	}
 }
