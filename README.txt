@@ -82,4 +82,6 @@ Features
 This program takes A4 language code in .txt files and outputs a list of tokens for that program.
 
 Bugs
-There is only one bug in the program. If the .txt file does not have the proper spacing between token values, the program will not run correctly. As long as the .txt file is properly formatted, the program will run with no errors.
+There is only one bug in the program. If the .txt file does not have the proper spacing between token values, 
+the program will not run correctly. 
+As long as the .txt file is properly formatted, the program will run with no errors.
