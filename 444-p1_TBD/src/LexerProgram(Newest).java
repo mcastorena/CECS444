@@ -2,7 +2,7 @@
 Authors:
 Minhkhoa Vu	minhkhoavu954@gmail.com
 Anthony Myers	anthonysmyers@yahoo.com
-Juan Espinoza	jaespin30@yahoo.com
+Juan Espinoza	jaespin300@yahoo.com
 Miguel Casterona miguel.angel.castorena@gmail.com
 
 LexerProgram.java Description
