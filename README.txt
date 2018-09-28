@@ -9,6 +9,9 @@ Miguel Casterona miguel.angel.castorena@gmail.com
 Introduction
 This program takes .txt file that contains A4 Language code and produces a list of tokens for the program.
 
+Algorithm
+N/A
+
 Contents
 LexerProgram.java
 MainApplication.java
