@@ -1,4 +1,3 @@
-package project1;
 /**
 Authors:
 Minhkhoa Vu	minhkhoavu954@gmail.com
