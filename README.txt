@@ -1,6 +1,6 @@
 CECS 444 Sec 01 5559
 Project 1 - A4 Lexicon
-Team LBC
+Team TBD
 Minhkhoa Vu	minhkhoavu954@gmail.com
 Anthony Myers	anthonysmyers@yahoo.com
 Juan Espinoza	jaespin30@yahoo.com
